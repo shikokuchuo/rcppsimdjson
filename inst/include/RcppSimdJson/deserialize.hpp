@@ -39,10 +39,10 @@ struct Parse_Opts {
 
 
 /**
- * @brief Deserialize a parsed  simdjson::dom::element to R objects.
+ * @brief Deserialize a parsed  simdjson::ondemand::value to R objects.
  *
  *
- * @param element  simdjson::dom::element to deserialize.
+ * @param element  simdjson::ondemand::value to deserialize.
  *
  * @param empty_array R object to return when encountering an empty JSON array.
  *
@@ -58,7 +58,7 @@ struct Parse_Opts {
  *
  * @return The simplified R object ( SEXP ).
  */
-inline auto deserialize(simdjson::dom::element parsed, const Parse_Opts& parse_opts) -> SEXP {
+inline auto deserialize(simdjson::ondemand::value parsed, const Parse_Opts& parse_opts) -> SEXP {
     using Int64_R_Type = utils::Int64_R_Type;
 
     auto& [simplify_to, type_policy, int64_opt, empty_array, empty_object, single_null] =
@@ -422,11 +422,11 @@ inline auto deserialize(simdjson::dom::element parsed, const Parse_Opts& parse_o
 
 
 template <typename json_T, bool is_file>
-inline simdjson::simdjson_result<simdjson::dom::element> parse(simdjson::dom::parser& parser,
+inline simdjson::simdjson_result<simdjson::ondemand::value> parse(simdjson::ondemand::parser& parser,
                                                                const json_T&          json) {
     if constexpr (utils::resembles_vec_raw<json_T>()) {
         /* if `json` is a raw (unsigned char) vector, we can cheat */
-        return parser.parse(
+        return parser.iterate(
             std::string_view(reinterpret_cast<const char*>(&(json[0])), std::size(json)));
     }
 

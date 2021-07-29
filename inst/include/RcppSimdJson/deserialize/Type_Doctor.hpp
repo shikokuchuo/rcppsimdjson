@@ -40,48 +40,48 @@ class Type_Doctor {
 
   public:
     Type_Doctor() = default;
-    explicit Type_Doctor<type_policy, int64_opt>(simdjson::dom::array) noexcept;
+    explicit Type_Doctor<type_policy, int64_opt>(simdjson::ondemand::array) noexcept;
 
     [[nodiscard]] constexpr auto has_null() const noexcept -> bool { return null_; };
 
     [[nodiscard]] constexpr auto common_R_type() const noexcept -> rcpp_T;
     [[nodiscard]] constexpr auto common_element_type() const noexcept
-        -> simdjson::dom::element_type;
+        -> utils::complete_json_type;
 
     [[nodiscard]] constexpr auto is_homogeneous() const noexcept -> bool;
     [[nodiscard]] constexpr auto is_vectorizable() const noexcept -> bool;
 
-    auto add_element(simdjson::dom::element) noexcept -> void;
+    auto add_element(simdjson::ondemand::value) noexcept -> void;
 
     constexpr auto update(Type_Doctor<type_policy, int64_opt>&&) noexcept -> void;
 };
 
 
 template <Type_Policy type_policy, utils::Int64_R_Type int64_opt>
-inline Type_Doctor<type_policy, int64_opt>::Type_Doctor(simdjson::dom::array array) noexcept {
-    for (auto element : array) {
-        switch (element.type()) {
-            case simdjson::dom::element_type::ARRAY:
+inline Type_Doctor<type_policy, int64_opt>::Type_Doctor(simdjson::ondemand::array array) noexcept {
+    for (auto value : array) {
+        switch (utils::get_complete_json_type(value)) {
+            case utils::complete_json_type::array:
                 ARRAY_ = true;
                 array_ = true;
                 break;
 
-            case simdjson::dom::element_type::OBJECT:
+            case utils::complete_json_type::object:
                 OBJECT_ = true;
                 object_ = true;
                 break;
 
-            case simdjson::dom::element_type::STRING:
+            case utils::complete_json_type::string:
                 STRING_ = true;
                 chr_    = true;
                 break;
 
-            case simdjson::dom::element_type::DOUBLE:
+            case utils::complete_json_type::double:
                 DOUBLE_ = true;
                 dbl_    = true;
                 break;
 
-            case simdjson::dom::element_type::INT64: {
+            case utils::complete_json_type::int64: {
                 INT64_ = true;
                 if constexpr (int64_opt == utils::Int64_R_Type::Always) {
                     i64_ = true;
@@ -95,17 +95,17 @@ inline Type_Doctor<type_policy, int64_opt>::Type_Doctor(simdjson::dom::array arr
                 break;
             }
 
-            case simdjson::dom::element_type::BOOL:
+            case utils::complete_json_type::boolean:
                 BOOL_ = true;
                 lgl_  = true;
                 break;
 
-            case simdjson::dom::element_type::NULL_VALUE:
+            case utils::complete_json_type::null:
                 NULL_VALUE_ = true;
                 null_       = true;
                 break;
 
-            case simdjson::dom::element_type::UINT64:
+            case utils::complete_json_type:::
                 UINT64_ = true;
                 u64_    = true;
                 break;
@@ -240,47 +240,47 @@ inline constexpr auto Type_Doctor<type_policy, int64_opt>::is_vectorizable() con
 
 
 template <Type_Policy type_policy, utils::Int64_R_Type int64_opt>
-inline constexpr simdjson::dom::element_type
+inline constexpr utils::complete_json_type
 Type_Doctor<type_policy, int64_opt>::common_element_type() const noexcept {
 
-    using simdjson::dom::element_type;
+    using utils::complete_json_type;
 
     return ARRAY_
-               ? element_type::ARRAY
-               : OBJECT_ ? element_type::OBJECT
-                         : STRING_ ? element_type::STRING
-                                   : UINT64_ ? element_type::UINT64
-                                             : DOUBLE_ ? element_type::DOUBLE
-                                                       : INT64_ ? element_type::INT64
-                                                                : BOOL_ ? element_type::BOOL
-                                                                        : element_type::NULL_VALUE;
+               ? complete_json_type::array
+               : OBJECT_ ? complete_json_type::object
+                         : STRING_ ? complete_json_type::string
+                                   : UINT64_ ? complete_json_type::uint64
+                                             : DOUBLE_ ? complete_json_type::double
+                                                       : INT64_ ? complete_json_type::int64
+                                                                : BOOL_ ? complete_json_type::boolean
+                                                                        : complete_json_type::null;
 }
 
 
 template <Type_Policy type_policy, utils::Int64_R_Type int64_opt>
-void Type_Doctor<type_policy, int64_opt>::add_element(simdjson::dom::element element) noexcept {
-    switch (element.type()) {
-        case simdjson::dom::element_type::ARRAY:
+void Type_Doctor<type_policy, int64_opt>::add_element(simdjson::ondemand::value element) noexcept {
+    switch (utils::get_complete_json_type(value)) {
+        case utils::complete_json_type::array:
             ARRAY_ = true;
             array_ = true;
             break;
 
-        case simdjson::dom::element_type::OBJECT:
+        case utils::complete_json_type::object:
             OBJECT_ = true;
             object_ = true;
             break;
 
-        case simdjson::dom::element_type::STRING:
+        case utils::complete_json_type::string:
             STRING_ = true;
             chr_    = true;
             break;
 
-        case simdjson::dom::element_type::DOUBLE:
+        case utils::complete_json_type::double:
             DOUBLE_ = true;
             dbl_    = true;
             break;
 
-        case simdjson::dom::element_type::INT64: {
+        case utils::complete_json_type::int64: {
             INT64_ = true;
             if constexpr (int64_opt == utils::Int64_R_Type::Always) {
                 i64_ = true;
@@ -294,17 +294,17 @@ void Type_Doctor<type_policy, int64_opt>::add_element(simdjson::dom::element ele
             break;
         }
 
-        case simdjson::dom::element_type::BOOL:
+        case utils::complete_json_type::boolean:
             BOOL_ = true;
             lgl_  = true;
             break;
 
-        case simdjson::dom::element_type::NULL_VALUE:
+        case utils::complete_json_type::null:
             NULL_VALUE_ = true;
             null_       = true;
             break;
 
-        case simdjson::dom::element_type::UINT64:
+        case utils::complete_json_type::uint64:
             UINT64_ = true;
             u64_    = true;
             break;
