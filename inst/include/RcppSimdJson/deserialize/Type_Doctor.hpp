@@ -21,21 +21,14 @@ class Type_Doctor {
     bool STRING_ = false;
     bool chr_    = false;
 
-    bool DOUBLE_ = false;
-    bool dbl_    = false;
-
-    bool INT64_ = false;
-    bool i64_   = false;
-    bool i32_   = false;
+    bool NUMBER_ = false;
+    bool num_    = false;
 
     bool BOOL_ = false;
     bool lgl_  = false;
 
     bool NULL_VALUE_ = false;
     bool null_       = false;
-
-    bool UINT64_ = false;
-    bool u64_    = false;
 
 
   public:
@@ -77,8 +70,8 @@ inline Type_Doctor<type_policy, int64_opt>::Type_Doctor(simdjson::ondemand::arra
                 break;
 
             case simdjson::ondemand::json_type::number:
-                DOUBLE_ = true;
-                dbl_    = true;
+                NUMBER_ = true;
+                num_    = true;
                 break;
 
             case utils::complete_json_type::boolean:
@@ -98,15 +91,15 @@ inline Type_Doctor<type_policy, int64_opt>::Type_Doctor(simdjson::ondemand::arra
 template <Type_Policy type_policy, utils::Int64_R_Type int64_opt>
 constexpr bool Type_Doctor<type_policy, int64_opt>::is_homogeneous() const noexcept {
     if (ARRAY_) {
-        return !(OBJECT_ || STRING_ || DOUBLE_ || BOOL_); // # nocov
+        return !(OBJECT_ || STRING_ || NUMBER_ || BOOL_); // # nocov
     }
     if (OBJECT_) {
-        return !(STRING_ || DOUBLE_ || BOOL_); // # nocov
+        return !(STRING_ || NUMBER_|| BOOL_); // # nocov
     }
     if (STRING_) {
-        return !(DOUBLE_ || BOOL_);
+        return !(NUMBER_ || BOOL_);
     }
-    if (DOUBLE_) {
+    if (NUMBER_) {
         return !(BOOL_);
     }
 
@@ -125,46 +118,30 @@ inline constexpr rcpp_T Type_Doctor<type_policy, int64_opt>::common_R_type() con
 
     if constexpr (type_policy == Type_Policy::anything_goes) {
         return chr_ ? rcpp_T::chr
-                           : dbl_ ? rcpp_T::dbl
-                                : lgl_ ? rcpp_T::lgl : rcpp_T::null;
+                           : num_ ? rcpp_T::dbl
+                                : num_ ? rcpp_T::lgl : rcpp_T::null;
 
     } else {
-        if (chr_ && !(dbl_ || lgl_)) {
+        if (chr_ && !(num_ || lgl_)) {
             return rcpp_T::chr;
         }
 
         if constexpr (type_policy == Type_Policy::strict) {
-            if (dbl_ && !(lgl_)) {
+            if (num_ && !(lgl_)) {
                 return rcpp_T::dbl;
-            }
-            if (i64_ && !(i32_ || lgl_ || u64_)) {
-                return rcpp_T::i64;
-            }
-            if (i32_ && !(lgl_ || u64_)) {
-                return rcpp_T::i32;
             }
         }
 
         if constexpr (type_policy == Type_Policy::ints_as_dbls) {
-            if (dbl_ && !(lgl_)) { // any number will become double
+            if (num_ && !(lgl_)) { // any number will become double
                 return rcpp_T::dbl;
-            }
-            if (i64_ && !(lgl_ || u64_)) {
-                // only 64/32-bit integers: will follow selected Int64_R_Type option
-                return rcpp_T::i64;
-            }
-            if (i32_ && !(lgl_ || u64_)) { // only 32-bit integers remaining: will become int
-                return rcpp_T::i32;
             }
         }
     }
 
 
-    if (lgl_ && !u64_) {
+    if (lgl_) {
         return rcpp_T::lgl;
-    }
-    if (u64_) {
-        return rcpp_T::u64;
     }
 
     return rcpp_T::null;
@@ -183,37 +160,27 @@ inline constexpr auto Type_Doctor<type_policy, int64_opt>::is_vectorizable() con
     }
 
     if (chr_) {
-        return !(dbl_ || lgl_);
+        return !(num_ || lgl_);
     }
 
     if constexpr (type_policy == Type_Policy::strict) {
-        if (dbl_) {
-            return !(lgl_);
-        }
-        if (i64_) {
-            return !(i32_ || lgl_ || u64_);
-        }
-        if (i32_) {
-            return !(lgl_ || u64_);
+        if (num_) {
+            return !lgl_;
         }
     }
 
     if constexpr (type_policy == Type_Policy::ints_as_dbls) {
-        if (dbl_) {
-            return !(lgl_);
+        if (num_) {
+            return !lgl_;
         }
     }
 
-    if (lgl_) {
-        return !u64_;
-    }
-
-    return u64_;
+    return lgl_;
 }
 
 
 template <Type_Policy type_policy, utils::Int64_R_Type int64_opt>
-inline constexpr utils::complete_json_type
+inline constexpr simdjson::ondemand::json_type;
 Type_Doctor<type_policy, int64_opt>::common_element_type() const noexcept {
 
     using simdjson::ondemand::json_type;

@@ -17,7 +17,7 @@ namespace deserialize {
 template <Type_Policy type_policy, utils::Int64_R_Type int64_opt, Simplify_To simplify_to>
 inline SEXP
 simplify_list(simdjson::ondemand::array array, SEXP empty_array, SEXP empty_object, SEXP single_null) {
-    Rcpp::List out(r_length(array));
+    Rcpp::List out(array.count_elements());
     auto i = R_xlen_t(0);
     for (auto value : array) {
         out[i++] = simplify_element<type_policy, int64_opt, simplify_to>(
@@ -79,7 +79,7 @@ inline SEXP dispatch_simplify_array(simdjson::ondemand::array array,
                                     SEXP                 empty_array,
                                     SEXP                 empty_object,
                                     SEXP                 single_null) {
-    if (std::size(array) == 0) {
+    if (array.count_elements() == 0) {
         return empty_array;
     }
 
@@ -110,7 +110,10 @@ inline SEXP simplify_object(const simdjson::ondemand::object object,
                             SEXP                        empty_array,
                             SEXP                        empty_object,
                             SEXP                        single_null) {
-    const auto n = r_length(object);
+    size_t n{0};
+    for (auto field : object) {
+        size_t++;
+    }
     if (n == 0) {
         return empty_object;
     }
@@ -171,13 +174,13 @@ inline SEXP simplify_element(simdjson::ondemand::value value,
         case simdjson::ondemand::json_type::number:
             return Rcpp::wrap(double(value));
 
-        case utils::complete_json_type::boolean:
+        case simdjson::ondemand::json_type::boolean:
             return Rcpp::wrap(bool(value));
 
-        case utils::complete_json::type::string:
+        case simdjson::ondemand::json_type::string:
             return Rcpp::wrap(Rcpp::String(std::string(std::string_view(value))));
 
-        case utils::complete_json::type::null:
+        case simdjson::ondemand::json_type::null:
             return single_null;
     }
 
