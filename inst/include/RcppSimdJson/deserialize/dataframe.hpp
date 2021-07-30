@@ -105,16 +105,16 @@ inline auto build_col_integer64(simdjson::ondemand::array                      a
                                 const Type_Doctor<type_policy, int64_opt> type_doc) -> SEXP {
 
     if constexpr (int64_opt == utils::Int64_R_Type::Double) {
-        return build_col<REALSXP, int64_t, rcpp_T::dbl, type_policy>(array, key, type_doc);
+        return build_col<REALSXP, double, rcpp_T::dbl, type_policy>(array, key, type_doc);
     }
 
     if constexpr (int64_opt == utils::Int64_R_Type::String) {
-        return build_col<STRSXP, int64_t, rcpp_T::chr, type_policy>(array, key, type_doc);
+        return build_col<STRSXP, double, rcpp_T::chr, type_policy>(array, key, type_doc);
     }
 
     if constexpr (int64_opt == utils::Int64_R_Type::Integer64 ||
                   int64_opt == utils::Int64_R_Type::Always) {
-        auto stl_vec = std::vector<int64_t>(array.count_elements(), NA_INTEGER64);
+        auto stl_vec = std::vector<double>(array.count_elements(), NA_INTEGER64);
         auto i_row   = std::size_t(0ULL);
 
         if (type_doc.is_homogeneous()) {
@@ -141,12 +141,12 @@ inline auto build_col_integer64(simdjson::ondemand::array                      a
             for (auto object : array) {
                 simdjson::ondemand::value value;
                 if(object.get_object().find_field_unordered(key).get(value) == simdjson::SUCCESS) {
-                    switch (utils::get_complete_json_type(value)) {
-                        case utils::complete_json_type::int64:
-                            stl_vec[i_row] = get_scalar<int64_t, rcpp_T::i64, NO_NULLS>(value);
+                    switch (value.type()) {
+                        case simdjson::ondemand::json_type::double:
+                            stl_vec[i_row] = get_scalar<double, rcpp_T::i64, NO_NULLS>(value);
                             break;
 
-                        case utils::complete_json_type::boolean:
+                        case simdjson::ondemand::json_type::boolean:
                             stl_vec[i_row] = get_scalar<bool, rcpp_T::i64, NO_NULLS>(value);
                             break;
 

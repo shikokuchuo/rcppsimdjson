@@ -159,20 +159,17 @@ inline SEXP simplify_element(simdjson::ondemand::value value,
                              SEXP                   empty_array,
                              SEXP                   empty_object,
                              SEXP                   single_null) {
-    switch (utils::get_complete_json_type(value)) {
-        case utils::complete_json::type::array:
+    switch (value.type()) {
+        case simdjson::ondemand::json_type::array:
             return dispatch_simplify_array<type_policy, int64_opt, simplify_to>(
                 simdjson::ondemand::array(value), empty_array, empty_object, single_null);
 
-        case utils::complete_json::type::object:
+        case simdjson::ondemand::json_type::object:
             return simplify_object<type_policy, int64_opt, simplify_to>(
                 simdjson::ondemand::object(value), empty_array, empty_object, single_null);
 
-        case utils::complete_json_type::double:
+        case simdjson::ondemand::json_type::number:
             return Rcpp::wrap(double(value));
-
-        case utils::complete_json_type::int64:
-            return utils::resolve_int64<int64_opt>(int64_t(value));
 
         case utils::complete_json_type::boolean:
             return Rcpp::wrap(bool(value));
@@ -182,9 +179,6 @@ inline SEXP simplify_element(simdjson::ondemand::value value,
 
         case utils::complete_json::type::null:
             return single_null;
-
-        case utils::complete_json_type::uint64:
-            return Rcpp::wrap(std::to_string(uint64_t(value)));
     }
 
     return R_NilValue; // # nocov
