@@ -143,7 +143,7 @@ inline SEXP dispatch_typed(simdjson::ondemand::array        array,
 
 
             // # nocov start
-        case utils::complete_json_type::null:
+        case simdjson::ondemand::json_type::null:
             return Rcpp::LogicalVector(std::size(array), NA_LOGICAL);
 
         default:
@@ -253,29 +253,8 @@ dispatch_mixed(simdjson::ondemand::array array, const rcpp_T R_Type, const std::
         case rcpp_T::dbl:
             return build_matrix_mixed<REALSXP>(array, n_cols);
 
-        case rcpp_T::i64: {
-            if constexpr (int64_opt == utils::Int64_R_Type::Double) {
-                return build_matrix_mixed<REALSXP>(array, n_cols);
-            }
-
-            if constexpr (int64_opt == utils::Int64_R_Type::String) {
-                return build_matrix_mixed<STRSXP>(array, n_cols);
-            }
-
-            if constexpr (int64_opt == utils::Int64_R_Type::Integer64 ||
-                          int64_opt == utils::Int64_R_Type::Always) {
-                return build_matrix_integer64_mixed(array, n_cols);
-            }
-        }
-
-        case rcpp_T::i32:
-            return build_matrix_mixed<INTSXP>(array, n_cols);
-
         case rcpp_T::lgl:                                     // # nocov
             return build_matrix_mixed<LGLSXP>(array, n_cols); // # nocov
-
-        case rcpp_T::u64:
-            return build_matrix_mixed<STRSXP>(array, n_cols);
 
         default: {
             auto out = Rcpp::LogicalMatrix(std::size(array), n_cols);

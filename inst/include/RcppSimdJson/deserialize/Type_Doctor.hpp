@@ -189,7 +189,7 @@ Type_Doctor<type_policy, int64_opt>::common_element_type() const noexcept {
                ? json_type::array
                : OBJECT_ ? json_type::object
                          : STRING_ ? json_type::string
-                                             : DOUBLE_ ? json_type::number
+                                             : NUM_ ? json_type::number
                                                                 : BOOL_ ? json_type::boolean
                                                                         : json_type::null;
 }
@@ -243,23 +243,14 @@ inline constexpr void Type_Doctor<type_policy, int64_opt>::update(
     this->STRING_ = this->STRING_ || type_doctor2.STRING_;
     this->chr_    = this->chr_ || type_doctor2.chr_;
 
-    this->DOUBLE_ = this->DOUBLE_ || type_doctor2.DOUBLE_;
-    this->dbl_    = this->dbl_ || type_doctor2.dbl_;
-
-    this->INT64_ = this->INT64_ || type_doctor2.INT64_;
-    this->i64_   = this->i64_ || type_doctor2.i64_;
-    if constexpr (int64_opt != utils::Int64_R_Type::Always) {
-        this->i32_ = this->i32_ || type_doctor2.i32_;
-    }
+    this->NUM_ = this->NUM_ || type_doctor2.NUM_;
+    this->num_    = this->num_ || type_doctor2.num_;
 
     this->BOOL_ = this->BOOL_ || type_doctor2.BOOL_;
     this->lgl_  = this->lgl_ || type_doctor2.lgl_;
 
     this->NULL_VALUE_ = this->NULL_VALUE_ || type_doctor2.NULL_VALUE_;
     this->null_       = this->null_ || type_doctor2.null_;
-
-    this->UINT64_ = this->UINT64_ || type_doctor2.UINT64_;
-    this->u64_    = this->u64_ || type_doctor2.u64_;
 }
 
 
