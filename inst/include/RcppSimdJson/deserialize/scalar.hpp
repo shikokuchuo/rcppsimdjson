@@ -141,10 +141,10 @@ template <>
 inline auto
 get_scalar_dispatch<REALSXP>(simdjson::ondemand::value element) noexcept(RCPPSIMDJSON_NO_EXCEPTIONS) {
     switch (element.type()) {
-        case simdjson::ondemand::json_type::::number:
+        case simdjson::ondemand::json_type::number:
             return get_scalar<double, rcpp_T::dbl, NO_NULLS>(element);
 
-        case simdjson::ondemand::json_type::::boolean:
+        case simdjson::ondemand::json_type::boolean:
             return get_scalar<bool, rcpp_T::dbl, NO_NULLS>(element);
 
         default:

@@ -74,12 +74,12 @@ inline Type_Doctor<type_policy, int64_opt>::Type_Doctor(simdjson::ondemand::arra
                 num_    = true;
                 break;
 
-            case utils::complete_json_type::boolean:
+            case simdjson::ondemand::json_type::boolean:
                 BOOL_ = true;
                 lgl_  = true;
                 break;
 
-            case utils::complete_json_type::null:
+            case simdjson::ondemand::json_type::null:
                 NULL_VALUE_ = true;
                 null_       = true;
                 break;
@@ -214,16 +214,16 @@ void Type_Doctor<type_policy, int64_opt>::add_element(simdjson::ondemand::value 
             break;
 
         case simdjson::ondemand::json_type::number:
-            DOUBLE_ = true;
-            dbl_    = true;
+            NUMBER_ = true;
+            num_    = true;
             break;
 
-        case utils::complete_json_type::boolean:
+        case simdjson::ondemand::json_type::boolean:
             BOOL_ = true;
             lgl_  = true;
             break;
 
-        case utils::complete_json_type::null:
+        case simdjson::ondemand::json_type::null:
             NULL_VALUE_ = true;
             null_       = true;
             break;
@@ -243,7 +243,7 @@ inline constexpr void Type_Doctor<type_policy, int64_opt>::update(
     this->STRING_ = this->STRING_ || type_doctor2.STRING_;
     this->chr_    = this->chr_ || type_doctor2.chr_;
 
-    this->NUM_ = this->NUM_ || type_doctor2.NUM_;
+    this->NUMBER_ = this->NUMBER_ || type_doctor2.NUMBER_;
     this->num_    = this->num_ || type_doctor2.num_;
 
     this->BOOL_ = this->BOOL_ || type_doctor2.BOOL_;

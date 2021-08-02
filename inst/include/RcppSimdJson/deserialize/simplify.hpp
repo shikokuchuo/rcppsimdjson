@@ -111,7 +111,7 @@ inline SEXP simplify_object(const simdjson::ondemand::object object,
                             SEXP                        empty_object,
                             SEXP                        single_null) {
     size_t n{0};
-    for (auto field : object) {
+    for (auto field : const object) {
         size_t++;
     }
     if (n == 0) {
@@ -122,7 +122,7 @@ inline SEXP simplify_object(const simdjson::ondemand::object object,
     Rcpp::CharacterVector out_names(n);
 
     auto i = R_xlen_t(0L);
-    for (auto field : object) {
+    for (auto field : const object) {
         out[i] = simplify_element<type_policy, int64_opt, simplify_to>(
             field.value(), empty_array, empty_object, single_null);
         out_names[i++] = Rcpp::String(std::string(field.key()));
