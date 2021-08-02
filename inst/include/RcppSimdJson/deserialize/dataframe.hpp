@@ -37,10 +37,10 @@ inline auto diagnose_data_frame(simdjson::ondemand::array array) noexcept(RCPPSI
         if(element.get(object) == simdjson::SUCCESS) {
             for (auto field : object) {
                 if (cols.schema.find(field.key()) == std::end(cols.schema)) {
-                    cols.schema[field.key()] = Column<type_policy, int64_opt>{
+                    cols.schema[std::string_view(field.key())] = Column<type_policy, int64_opt>{
                         col_index++, Type_Doctor<type_policy, int64_opt>()};
                 }
-                cols.schema[field.key()].schema.add_element(field.value());
+                cols.schema[std::string_view(field.key())].schema.add_element(field.value());
             }
         } else {
             return std::nullopt;

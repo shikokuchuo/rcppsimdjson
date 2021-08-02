@@ -180,9 +180,8 @@ inline constexpr auto Type_Doctor<type_policy, int64_opt>::is_vectorizable() con
 
 
 template <Type_Policy type_policy, utils::Int64_R_Type int64_opt>
-inline constexpr simdjson::ondemand::json_type;
 Type_Doctor<type_policy, int64_opt>::common_element_type() const noexcept {
-
+    inline constexpr simdjson::ondemand::json_type;
     using simdjson::ondemand::json_type;
 
     return ARRAY_

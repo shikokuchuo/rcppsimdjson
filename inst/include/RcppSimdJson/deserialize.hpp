@@ -443,7 +443,7 @@ inline simdjson::simdjson_result<simdjson::ondemand::document> parse(simdjson::o
                     parser, /* ... and decompress to a RawVector if so, then parse that */
                     utils::decompress(std::string(json), Rcpp::String(std::string(*file_type))));
             }
-            auto content = padded_string::load(json);
+            auto content = simdjson::padded_string::load(json);
             return parser.iterate(content); /* otherwise, load the file and iterate it*/
         } else {
             return parser.iterate(std::string_view(json)); /* if not file, just parse the string */

@@ -144,7 +144,7 @@ inline SEXP dispatch_typed(simdjson::ondemand::array        array,
 
             // # nocov start
         case simdjson::ondemand::json_type::null:
-            return Rcpp::LogicalVector(std::size(array), NA_LOGICAL);
+            return Rcpp::LogicalVector(array.count_elements(), NA_LOGICAL);
 
         default:
             return R_NilValue;
@@ -186,7 +186,7 @@ inline SEXP build_matrix_mixed(simdjson::ondemand::array array, std::size_t n_co
 
 inline Rcpp::NumericVector build_matrix_integer64_mixed(simdjson::ondemand::array array,
                                                         std::size_t          n_cols) {
-    const auto           n_rows(std::size(array));
+    const auto           n_rows(array.count_elements());
     std::vector<double> stl_vec_int64(n_rows * n_cols);
     std::size_t          j(0ULL);
 
@@ -195,12 +195,12 @@ inline Rcpp::NumericVector build_matrix_integer64_mixed(simdjson::ondemand::arra
     for (simdjson::ondemand::array sub_array : array) {
         std::size_t i(0ULL);
         for (auto&& element : sub_array) {
-            switch (utils::get_complete_type(element)) {
-                case utils::complete_json_type::int64:
+            switch (element.type()) {
+                case simdjson::ondemand::json_type::number:
                     stl_vec_int64[i + j] = get_scalar<double, rcpp_T::i64, NO_NULLS>(element);
                     break;
 
-                case utils::complete_json_type::boolean:
+                case simdjson::ondemand::json_type::boolean:
                     stl_vec_int64[i + j] = get_scalar<bool, rcpp_T::i64, NO_NULLS>(element);
                     break;
 
@@ -217,12 +217,12 @@ inline Rcpp::NumericVector build_matrix_integer64_mixed(simdjson::ondemand::arra
     for (simdjson::ondemand::array element : array) {
         std::size_t i(0ULL);
         for (auto sub_element : element) {
-            switch (utils.get_complete_type(element)) {
-                case utils::complete_json_type::int64:
+            switch (element.type()) {
+                case simdjson::ondemand::json_type::number:
                     stl_vec_int64[i + j] = get_scalar<double, rcpp_T::i64, NO_NULLS>(sub_element);
                     break;
 
-                case utils::complete_json_type::boolean:
+                case simdjson::ondemand::json_type::boolean:
                     stl_vec_int64[i + j] = get_scalar<bool, rcpp_T::i64, NO_NULLS>(sub_element);
                     break;
 
@@ -257,7 +257,7 @@ dispatch_mixed(simdjson::ondemand::array array, const rcpp_T R_Type, const std::
             return build_matrix_mixed<LGLSXP>(array, n_cols); // # nocov
 
         default: {
-            auto out = Rcpp::LogicalMatrix(std::size(array), n_cols);
+            auto out = Rcpp::LogicalMatrix(array.count_elements(), n_cols);
             out.fill(NA_LOGICAL);
             return out;
         }
