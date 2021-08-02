@@ -190,18 +190,6 @@ build_data_frame(simdjson::ondemand::array                                      
                 break;
             }
 
-            case rcpp_T::i64: {
-                out[col.index] =
-                    build_col_integer64<type_policy, int64_opt>(array, key, col.schema);
-                break;
-            }
-
-            case rcpp_T::i32: {
-                out[col.index] =
-                    build_col<INTSXP, int64_t, rcpp_T::i32, type_policy>(array, key, col.schema);
-                break;
-            }
-
             case rcpp_T::lgl: {
                 out[col.index] =
                     build_col<LGLSXP, bool, rcpp_T::lgl, type_policy>(array, key, col.schema);
@@ -210,12 +198,6 @@ build_data_frame(simdjson::ondemand::array                                      
 
             case rcpp_T::null: {
                 out[col.index] = Rcpp::LogicalVector(n_rows, NA_LOGICAL);
-                break;
-            }
-
-            case rcpp_T::u64: {
-                out[col.index] =
-                    build_col<STRSXP, uint64_t, rcpp_T::chr, type_policy>(array, key, col.schema);
                 break;
             }
 
