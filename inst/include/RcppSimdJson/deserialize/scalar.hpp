@@ -21,7 +21,7 @@ template <typename in_T, rcpp_T R_Type>
 inline auto get_scalar_(simdjson::ondemand::value) noexcept(noxcpt<R_Type>());
 
 template <typename in_T, rcpp_T R_Type, bool has_null>
-inline simdjson::simdjson_result<simdjson::ondemand::value> get_scalar(simdjson::ondemand::value element) noexcept(noxcpt<R_Type>()) {
+inline auto get_scalar(simdjson::ondemand::value element) noexcept(noxcpt<R_Type>()) {
     if constexpr (has_null) {
         return element.is_null() ? na_val<R_Type>() : get_scalar_<in_T, R_Type>(element);
     } else {
@@ -34,63 +34,63 @@ inline simdjson::simdjson_result<simdjson::ondemand::value> get_scalar(simdjson:
 // return Rcpp::String
 template <>
 inline auto
-get_scalar_<bool, rcpp_T::chr>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::chr>()) {
+get_scalar_<bool, rcpp_T::chr>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::chr>()) const {
     return bool(element) ? Rcpp::String("TRUE") : Rcpp::String("FALSE");
 }
 // return double
 template <>
 inline auto
-get_scalar_<bool, rcpp_T::dbl>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::dbl>()) {
+get_scalar_<bool, rcpp_T::dbl>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::dbl>()) const{
     return bool(element) ? 1.0 : 0.0;
 }
 // return int64_t
 template <>
 inline auto
-get_scalar_<bool, rcpp_T::i64>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::i64>()) {
+get_scalar_<bool, rcpp_T::i64>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::i64>()) const{
     return bool(element) ? static_cast<int64_t>(1LL) : static_cast<int64_t>(0LL);
 }
 // return int
 template <>
 inline auto
-get_scalar_<bool, rcpp_T::i32>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::i32>()) {
+get_scalar_<bool, rcpp_T::i32>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::i32>()) const{
     return bool(element) ? 1 : 0;
 }
 // return "bool"
 template <>
 inline auto
-get_scalar_<bool, rcpp_T::lgl>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::lgl>()) {
+get_scalar_<bool, rcpp_T::lgl>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::lgl>()) const{
     return bool(element);
 }
 // int64_t =========================================================================================
 // return Rcpp::String
 template <>
 inline auto
-get_scalar_<int64_t, rcpp_T::chr>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::chr>()) {
+get_scalar_<int64_t, rcpp_T::chr>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::chr>()) const{
     return Rcpp::String(std::to_string(int64_t(element)));
 }
 // return double
 template <>
 inline auto
-get_scalar_<int64_t, rcpp_T::dbl>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::dbl>()) {
+get_scalar_<int64_t, rcpp_T::dbl>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::dbl>()) const{
     return double(element);
 }
 // return int64_t
 template <>
 inline auto
-get_scalar_<int64_t, rcpp_T::i64>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::i64>()) {
+get_scalar_<int64_t, rcpp_T::i64>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::i64>()) const{
     return int64_t(element);
 }
 // return int
 template <>
 inline auto
-get_scalar_<int64_t, rcpp_T::i32>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::i32>()) {
+get_scalar_<int64_t, rcpp_T::i32>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::i32>()) const{
     return static_cast<int>(int64_t(element));
 }
 // double ==========================================================================================
 // return Rcpp::String
 template <>
 inline auto
-get_scalar_<double, rcpp_T::chr>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::chr>()) {
+get_scalar_<double, rcpp_T::chr>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::chr>()) const{
     auto out = std::to_string(double(element));
     out.erase(out.find_last_not_of('0') + 2, std::string::npos);
     return Rcpp::String(out);
@@ -98,21 +98,21 @@ get_scalar_<double, rcpp_T::chr>(simdjson::ondemand::value element) noexcept(nox
 // return double
 template <>
 inline auto
-get_scalar_<double, rcpp_T::dbl>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::dbl>()) {
+get_scalar_<double, rcpp_T::dbl>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::dbl>()) const{
     return double(element);
 }
 // std::string (really std::string_view) ===========================================================
 // return Rcpp::String
 template <>
 inline auto get_scalar_<std::string, rcpp_T::chr>(simdjson::ondemand::value element) noexcept(
-    noxcpt<rcpp_T::chr>()) {
+    noxcpt<rcpp_T::chr>()) const{
     return Rcpp::String(std::string(std::string_view(element)));
 }
 // uint64_t ========================================================================================
 // return Rcpp::String
 template <>
 inline auto
-get_scalar_<uint64_t, rcpp_T::chr>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::chr>()) {
+get_scalar_<uint64_t, rcpp_T::chr>(simdjson::ondemand::value element) noexcept(noxcpt<rcpp_T::chr>()) const{
     return Rcpp::String(std::to_string(uint64_t(element)));
 }
 // dispatchers =====================================================================================
@@ -120,7 +120,7 @@ template <int RTYPE>
 inline auto get_scalar_dispatch(simdjson::ondemand::value) noexcept(noxcpt<RTYPE>());
 
 template <>
-inline auto get_scalar_dispatch<STRSXP>(simdjson::ondemand::value element) noexcept(false) {
+inline auto get_scalar_dispatch<STRSXP>(simdjson::ondemand::value element) noexcept(false) const{
     switch (element.type()) {
         case simdjson::ondemand::json_type::string:
             return get_scalar<std::string, rcpp_T::chr, NO_NULLS>(element);
