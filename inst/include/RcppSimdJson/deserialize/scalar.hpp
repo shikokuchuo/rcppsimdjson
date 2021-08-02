@@ -21,7 +21,7 @@ template <typename in_T, rcpp_T R_Type>
 inline auto get_scalar_(simdjson::ondemand::value) noexcept(noxcpt<R_Type>());
 
 template <typename in_T, rcpp_T R_Type, bool has_null>
-inline auto get_scalar(simdjson::ondemand::value element) noexcept(noxcpt<R_Type>()) {
+inline simdjson::simdjson_result<simdjson::ondemand::value> get_scalar(simdjson::ondemand::value element) noexcept(noxcpt<R_Type>()) {
     if constexpr (has_null) {
         return element.is_null() ? na_val<R_Type>() : get_scalar_<in_T, R_Type>(element);
     } else {
