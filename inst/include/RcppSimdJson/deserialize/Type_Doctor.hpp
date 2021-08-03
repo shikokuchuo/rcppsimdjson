@@ -187,7 +187,7 @@ inline constexpr simdjson::ondemand::json_type Type_Doctor<type_policy, int64_op
                ? json_type::array
                : OBJECT_ ? json_type::object
                          : STRING_ ? json_type::string
-                                             : NUM_ ? json_type::number
+                                             : NUMBER_ ? json_type::number
                                                                 : BOOL_ ? json_type::boolean
                                                                         : json_type::null;
 }

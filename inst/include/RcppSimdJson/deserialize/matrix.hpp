@@ -47,7 +47,7 @@ diagnose(simdjson::ondemand::array array) noexcept(RCPPSIMDJSON_NO_EXCEPTIONS) {
 template <int RTYPE, typename in_T, rcpp_T R_Type, bool has_nulls>
 inline Rcpp::Vector<RTYPE> build_matrix_typed(simdjson::ondemand::array array,
                                               const std::size_t    n_cols) {
-    const R_xlen_t      n_rows = array.count_elements();
+    const R_xlen_t      n_rows = static_cast<size_t>(array.count_elements());
     Rcpp::Matrix<RTYPE> out(n_rows, static_cast<R_xlen_t>(n_cols));
     R_xlen_t            j(0L);
 

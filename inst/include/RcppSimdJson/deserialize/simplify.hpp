@@ -106,12 +106,12 @@ inline SEXP dispatch_simplify_array(simdjson::ondemand::array array,
 
 
 template <Type_Policy type_policy, utils::Int64_R_Type int64_opt, Simplify_To simplify_to>
-inline SEXP simplify_object(const simdjson::ondemand::object object,
+inline SEXP simplify_object(simdjson::ondemand::object object,
                             SEXP                        empty_array,
                             SEXP                        empty_object,
                             SEXP                        single_null) {
     size_t n{0};
-    for (auto field : const object) {
+    for (auto field : object) {
         size_t++;
     }
     if (n == 0) {
@@ -122,7 +122,7 @@ inline SEXP simplify_object(const simdjson::ondemand::object object,
     Rcpp::CharacterVector out_names(n);
 
     auto i = R_xlen_t(0L);
-    for (auto field : const object) {
+    for (auto field : object) {
         out[i] = simplify_element<type_policy, int64_opt, simplify_to>(
             field.value(), empty_array, empty_object, single_null);
         out_names[i++] = Rcpp::String(std::string(field.key()));
@@ -162,7 +162,7 @@ inline SEXP simplify_element(simdjson::ondemand::value value,
                              SEXP                   empty_array,
                              SEXP                   empty_object,
                              SEXP                   single_null) {
-    switch (value.type()) {
+    switch (value.type()) const {
         case simdjson::ondemand::json_type::array:
             return dispatch_simplify_array<type_policy, int64_opt, simplify_to>(
                 simdjson::ondemand::array(value), empty_array, empty_object, single_null);
