@@ -217,7 +217,7 @@ inline Rcpp::NumericVector build_matrix_integer64_mixed(simdjson::ondemand::arra
     for (simdjson::ondemand::array element : array) {
         std::size_t i(0ULL);
         for (auto sub_element : element) {
-            switch (element.type()) {
+            switch (sub_element.type()) {
                 case simdjson::ondemand::json_type::number:
                     stl_vec_int64[i + j] = get_scalar<double, rcpp_T::i64, NO_NULLS>(sub_element);
                     break;
