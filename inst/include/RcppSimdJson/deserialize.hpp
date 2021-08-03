@@ -426,8 +426,9 @@ inline simdjson::simdjson_result<simdjson::ondemand::document> parse(simdjson::o
                                                                const json_T&          json) {
     if constexpr (utils::resembles_vec_raw<json_T>()) {
         /* if `json` is a raw (unsigned char) vector, we can cheat */
+        simdjson::padded_string content = reinterpret_cast<const char*>(&(json[0]));
         return parser.iterate(
-            std::string_view(reinterpret_cast<const char*>(&(json[0])), std::size(json)));
+            std::string_view(content, content.length());
     }
 
     if constexpr (utils::resembles_vec_chr<json_T>()) {
@@ -443,10 +444,11 @@ inline simdjson::simdjson_result<simdjson::ondemand::document> parse(simdjson::o
                     parser, /* ... and decompress to a RawVector if so, then parse that */
                     utils::decompress(std::string(json), Rcpp::String(std::string(*file_type))));
             }
-            auto content = simdjson::padded_string::load(json);
+            auto content = simdjson::padded_string::load(std::string_view(json));
             return parser.iterate(content); /* otherwise, load the file and iterate it*/
         } else {
-            return parser.iterate(std::string_view(json)); /* if not file, just parse the string */
+            simdjson::padded_string content = simdjson::padded_string(std::string_view(json));
+            return parser.iterate(content); /* if not file, just parse the string */
         }
     }
 }

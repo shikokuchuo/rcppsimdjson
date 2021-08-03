@@ -112,7 +112,7 @@ inline SEXP simplify_object(simdjson::ondemand::object object,
                             SEXP                        single_null) {
     size_t n{0};
     for (auto field : object) {
-        size_t++;
+        n++;
     }
     if (n == 0) {
         return empty_object;
@@ -162,7 +162,7 @@ inline SEXP simplify_element(simdjson::ondemand::value value,
                              SEXP                   empty_array,
                              SEXP                   empty_object,
                              SEXP                   single_null) {
-    switch (value.type()) const {
+    switch (value.type()) {
         case simdjson::ondemand::json_type::array:
             return dispatch_simplify_array<type_policy, int64_opt, simplify_to>(
                 simdjson::ondemand::array(value), empty_array, empty_object, single_null);

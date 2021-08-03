@@ -47,7 +47,7 @@ diagnose(simdjson::ondemand::array array) noexcept(RCPPSIMDJSON_NO_EXCEPTIONS) {
 template <int RTYPE, typename in_T, rcpp_T R_Type, bool has_nulls>
 inline Rcpp::Vector<RTYPE> build_matrix_typed(simdjson::ondemand::array array,
                                               const std::size_t    n_cols) {
-    const R_xlen_t      n_rows = static_cast<size_t>(array.count_elements());
+    const R_xlen_t      n_rows = static_cast<R_xlen_t>(array.count_elements());
     Rcpp::Matrix<RTYPE> out(n_rows, static_cast<R_xlen_t>(n_cols));
     R_xlen_t            j(0L);
 
@@ -81,7 +81,7 @@ inline Rcpp::Vector<RTYPE> build_matrix_typed(simdjson::ondemand::array array,
 template <bool has_nulls>
 inline Rcpp::NumericVector build_matrix_integer64_typed(simdjson::ondemand::array array,
                                                         const std::size_t    n_cols) {
-    const auto           n_rows(array.count_elements());
+    const auto           n_rows(static_cast<R_xlen_t>(array.count_elements()));
     std::vector<double> stl_vec_int64(n_rows * n_cols);
     std::size_t          j(0ULL);
 
@@ -130,7 +130,7 @@ inline SEXP dispatch_typed(simdjson::ondemand::array        array,
                        : build_matrix_typed<STRSXP, std::string, rcpp_T::chr, NO_NULLS>(array,
                                                                                         n_cols);
 
-        case simdjson::ondemand::json_type::number;
+        case simdjson::ondemand::json_type::number:
             return has_nulls
                        ? build_matrix_typed<REALSXP, double, rcpp_T::dbl, HAS_NULLS>(array, n_cols)
                        : build_matrix_typed<REALSXP, double, rcpp_T::dbl, NO_NULLS>(array, n_cols);
@@ -144,7 +144,7 @@ inline SEXP dispatch_typed(simdjson::ondemand::array        array,
 
             // # nocov start
         case simdjson::ondemand::json_type::null:
-            return Rcpp::LogicalVector(array.count_elements(), NA_LOGICAL);
+            return Rcpp::LogicalVector(static_cast<R_xlen_t>(array.count_elements()), NA_LOGICAL);
 
         default:
             return R_NilValue;
@@ -154,7 +154,7 @@ inline SEXP dispatch_typed(simdjson::ondemand::array        array,
 
 template <int RTYPE>
 inline SEXP build_matrix_mixed(simdjson::ondemand::array array, std::size_t n_cols) {
-    const R_xlen_t      n_rows(array.count_elements());
+    const R_xlen_t      n_rows(static_cast<R_xlen_t>(array.count_elements()));
     Rcpp::Matrix<RTYPE> out(n_rows, static_cast<R_xlen_t>(n_cols));
     R_xlen_t            j(0L);
 
@@ -186,7 +186,7 @@ inline SEXP build_matrix_mixed(simdjson::ondemand::array array, std::size_t n_co
 
 inline Rcpp::NumericVector build_matrix_integer64_mixed(simdjson::ondemand::array array,
                                                         std::size_t          n_cols) {
-    const auto           n_rows(array.count_elements());
+    const auto           n_rows(static_cast<R_xlen_t>(array.count_elements()));
     std::vector<double> stl_vec_int64(n_rows * n_cols);
     std::size_t          j(0ULL);
 
@@ -257,7 +257,7 @@ dispatch_mixed(simdjson::ondemand::array array, const rcpp_T R_Type, const std::
             return build_matrix_mixed<LGLSXP>(array, n_cols); // # nocov
 
         default: {
-            auto out = Rcpp::LogicalMatrix(array.count_elements(), n_cols);
+            auto out = Rcpp::LogicalMatrix(static_cast<R_xlen_t>(array.count_elements()), n_cols);
             out.fill(NA_LOGICAL);
             return out;
         }
