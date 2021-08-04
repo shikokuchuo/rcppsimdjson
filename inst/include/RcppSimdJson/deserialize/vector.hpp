@@ -13,7 +13,10 @@ inline Rcpp::Vector<RTYPE> build_vector_typed(simdjson::ondemand::array array) {
     Rcpp::Vector<RTYPE> out(array.count_elements());
     R_xlen_t            i(0L);
     for (auto element : array) {
-        out[i++] = get_scalar<in_T, R_Type, has_nulls>(element);
+        simdjson::ondemand::value val;
+        if (element.get(val) == simdjson::SUCCESS) {
+            out[i++] = get_scalar<in_T, R_Type, has_nulls>(val);
+        }
     }
     return out;
 }
@@ -24,7 +27,10 @@ inline Rcpp::Vector<REALSXP> build_vector_integer64_typed(simdjson::ondemand::ar
     std::vector<int64_t> stl_vec_int64(array.count_elements());
     std::size_t          i(0ULL);
     for (auto element : array) {
-        stl_vec_int64[i++] = get_scalar<int64_t, rcpp_T::i64, has_nulls>(element);
+        simdjson::ondemand::value val;
+        if (element.get(val) == simdjson::SUCCESS) {
+            stl_vec_int64[i++] = get_scalar<int64_t, rcpp_T::i64, has_nulls>(val);
+        }
     }
     return utils::as_integer64(stl_vec_int64);
 }
@@ -85,7 +91,10 @@ inline Rcpp::Vector<RTYPE> build_vector_mixed(simdjson::ondemand::array array) {
     Rcpp::Vector<RTYPE> out(array.count_elements());
     R_xlen_t            i(0L);
     for (auto element : array) {
-        out[i++] = get_scalar_dispatch<RTYPE>(element);
+        simdjson::ondemand::value val;
+        if (element.get(val) == simdjson::SUCCESS) {
+            out[i++] = get_scalar_dispatch<RTYPE>(val);
+        }
     }
     return out;
 }
@@ -96,18 +105,21 @@ inline Rcpp::Vector<REALSXP> build_vector_integer64_mixed(simdjson::ondemand::ar
     std::size_t          i(0ULL);
 
     for (auto element : array) {
-        switch (element.type()) {
-            case simdjson::ondemand::json_type::number:
-                stl_vec_int64[i++] = get_scalar<double, rcpp_T::i64, HAS_NULLS>(element);
-                break;
+        simdjson::ondemand::value val;
+        if (element.get(val) == simdjson::SUCCESS) {
+            switch (element.type()) {
+                case simdjson::ondemand::json_type::number:
+                    stl_vec_int64[i++] = get_scalar<double, rcpp_T::i64, HAS_NULLS>(val);
+                    break;
 
-            case simdjson::ondemand::json_type::boolean:
-                stl_vec_int64[i++] = get_scalar<bool, rcpp_T::i64, HAS_NULLS>(element);
-                break;
+                case simdjson::ondemand::json_type::boolean:
+                    stl_vec_int64[i++] = get_scalar<bool, rcpp_T::i64, HAS_NULLS>(val);
+                    break;
 
-            default:
-                stl_vec_int64[i++] = NA_INTEGER64;
-                break;
+                default:
+                    stl_vec_int64[i++] = NA_INTEGER64;
+                    break;
+            }
         }
     }
 
