@@ -88,7 +88,7 @@ template <bool has_nulls>
 inline Rcpp::NumericVector build_matrix_integer64_typed(simdjson::ondemand::array array,
                                                         const std::size_t    n_cols) {
     const auto           n_rows(static_cast<R_xlen_t>(array.count_elements()));
-    std::vector<double> stl_vec_int64(n_rows * n_cols);
+    std::vector<int64_t> stl_vec_int64(n_rows * n_cols);
     std::size_t          j(0ULL);
 
 #ifdef RCPPSIMDJSON_IS_GCC_7
@@ -98,7 +98,7 @@ inline Rcpp::NumericVector build_matrix_integer64_typed(simdjson::ondemand::arra
         for (auto&& element : sub_array) {
             simdjson::ondemand::value val;
             if (element.get(val) == simdjson::SUCCESS) {
-                stl_vec_int64[i + j] = get_scalar<double, rcpp_T::i64, has_nulls>(val);
+                stl_vec_int64[i + j] = get_scalar<int64_t, rcpp_T::i64, has_nulls>(val);
                 i += n_rows;
             }
         }
@@ -112,7 +112,7 @@ inline Rcpp::NumericVector build_matrix_integer64_typed(simdjson::ondemand::arra
         for (auto element : sub_array) {
             simdjson::ondemand::value val;
             if (element.get(val) == simdjson::SUCCESS) {
-                stl_vec_int64[i + j] = get_scalar<double, rcpp_T::i64, has_nulls>(val);
+                stl_vec_int64[i + j] = get_scalar<int64_t, rcpp_T::i64, has_nulls>(val);
                 i += n_rows;
             }
         }
