@@ -101,7 +101,7 @@ inline Rcpp::Vector<RTYPE> build_vector_mixed(simdjson::ondemand::array array) {
 
 
 inline Rcpp::Vector<REALSXP> build_vector_integer64_mixed(simdjson::ondemand::array array) {
-    std::vector<double> stl_vec_int64(array.count_elements());
+    std::vector<int64_t> stl_vec_int64(array.count_elements());
     std::size_t          i(0ULL);
 
     for (auto element : array) {
@@ -109,7 +109,7 @@ inline Rcpp::Vector<REALSXP> build_vector_integer64_mixed(simdjson::ondemand::ar
         if (element.get(val) == simdjson::SUCCESS) {
             switch (element.type()) {
                 case simdjson::ondemand::json_type::number:
-                    stl_vec_int64[i++] = get_scalar<double, rcpp_T::i64, HAS_NULLS>(val);
+                    stl_vec_int64[i++] = get_scalar<int64_t, rcpp_T::i64, HAS_NULLS>(val);
                     break;
 
                 case simdjson::ondemand::json_type::boolean:

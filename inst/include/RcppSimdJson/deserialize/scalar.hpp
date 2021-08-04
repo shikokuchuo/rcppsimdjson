@@ -161,7 +161,7 @@ get_scalar_dispatch<INTSXP>(simdjson::ondemand::value element) noexcept(RCPPSIMD
             return get_scalar<double, rcpp_T::i32, NO_NULLS>(element);
 
         case simdjson::ondemand::json_type::boolean:
-            return get_scalar<bool, rcpp_T::i32, HAS_NULLS>(element);
+            return get_scalar<bool, rcpp_T::i32, NO_NULLS>(element);
 
         default:
             return NA_INTEGER;
