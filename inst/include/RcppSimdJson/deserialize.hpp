@@ -426,7 +426,7 @@ inline simdjson::simdjson_result<simdjson::ondemand::document> parse(simdjson::o
                                                                const json_T&          json) {
     if constexpr (utils::resembles_vec_raw<json_T>()) {
         /* if `json` is a raw (unsigned char) vector, we can cheat */
-        simdjson::padded_string content = simdjson::padded_string::padded_string(reinterpret_cast<const char*>(&(json[0])), json[0].length());
+        simdjson::padded_string content = simdjson::padded_string::(reinterpret_cast<const char*>(&(json[0])), json[0].size());
         return parser.iterate(content);
     }
 

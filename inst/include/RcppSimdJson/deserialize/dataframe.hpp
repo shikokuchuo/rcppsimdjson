@@ -114,7 +114,7 @@ inline auto build_col_integer64(simdjson::ondemand::array                      a
 
     if constexpr (int64_opt == utils::Int64_R_Type::Integer64 ||
                   int64_opt == utils::Int64_R_Type::Always) {
-        auto stl_vec = std::vector<double>(array.count_elements(), NA_INTEGER64);
+        auto stl_vec = std::vector<int64_t>(array.count_elements(), NA_INTEGER64);
         auto i_row   = std::size_t(0ULL);
 
         if (type_doc.is_homogeneous()) {
@@ -143,7 +143,7 @@ inline auto build_col_integer64(simdjson::ondemand::array                      a
                 if(object.get_object().find_field_unordered(key).get(value) == simdjson::SUCCESS) {
                     switch (value.type()) {
                         case simdjson::ondemand::json_type::number:
-                            stl_vec[i_row] = get_scalar<double, rcpp_T::double, NO_NULLS>(value);
+                            stl_vec[i_row] = get_scalar<int64_t, rcpp_T::i64, NO_NULLS>(value);
                             break;
 
                         case simdjson::ondemand::json_type::boolean:
