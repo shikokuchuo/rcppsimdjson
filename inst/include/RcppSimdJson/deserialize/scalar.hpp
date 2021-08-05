@@ -145,7 +145,7 @@ get_scalar_dispatch<REALSXP>(simdjson::ondemand::value element) noexcept(RCPPSIM
             return get_scalar<double, rcpp_T::dbl, NO_NULLS>(element);
 
         case simdjson::ondemand::json_type::boolean:
-            return get_scalar<bool, rcpp_T::dbl, NO_NULLS>(element);
+            return get_scalar<bool, rcpp_T::dbl, HAS_NULLS>(element);
 
         default:
             return NA_REAL;

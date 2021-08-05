@@ -205,7 +205,7 @@ inline SEXP build_matrix_mixed(simdjson::ondemand::array array, std::size_t n_co
 inline Rcpp::NumericVector build_matrix_integer64_mixed(simdjson::ondemand::array array,
                                                         std::size_t          n_cols) {
     const auto           n_rows(static_cast<R_xlen_t>(array.count_elements()));
-    std::vector<double> stl_vec_int64(n_rows * n_cols);
+    std::vector<int64_t> stl_vec_int64(n_rows * n_cols);
     std::size_t          j(0ULL);
 
 #ifdef RCPPSIMDJSON_IS_GCC_7
@@ -217,7 +217,7 @@ inline Rcpp::NumericVector build_matrix_integer64_mixed(simdjson::ondemand::arra
             if (element.get(val) == simdjson::SUCCESS) {
                 switch (element.type()) {
                     case simdjson::ondemand::json_type::number:
-                        stl_vec_int64[i + j] = get_scalar<double, rcpp_T::i64, NO_NULLS>(val);
+                        stl_vec_int64[i + j] = get_scalar<int64_t, rcpp_T::i64, NO_NULLS>(val);
                         break;
 
                     case simdjson::ondemand::json_type::boolean:
