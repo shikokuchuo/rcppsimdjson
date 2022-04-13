@@ -7,13 +7,11 @@
 ^inst/jsonexamples/mesh.pretty.json$
 ^.*\.tar\.gz$
 ^docs
-\.travis\.yml
 \.clang-format$
 \.covrignore$
 ^local
-^\.github^travis-tool\.sh$
+^\.github
 ^run\.sh$
-^travis_wait_.*\.log$
 ^run\.sh$
 ^run\.sh$
 ^run\.sh$

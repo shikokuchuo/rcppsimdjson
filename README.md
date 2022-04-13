@@ -34,26 +34,6 @@ validateJSON(jsonfile)                  # validate a JSON file
 res <- fload(jsonfile)                  # parse a JSON file
 ```
 
-### Comparison
-
-A [simple parsing benchmark](demo/simpleBenchmark.R) against four other R-accessible JSON parsers:
-
-```r
-R> res
-Unit: milliseconds
-     expr      min       lq     mean   median       uq       max neval  cld
- simdjson  1.87118  2.03252  2.24351  2.17228  2.27756   6.57145   100 a   
-  jsonify  8.91694  9.20124  9.58652  9.46077  9.73692  13.41707   100  b  
-  RJSONIO 10.49187 11.09410 11.69109 11.42555 11.95780  17.93653   100  b  
-   ndjson 27.04830 28.62251 31.44330 29.51343 32.05847 146.88221   100   c 
- jsonlite 34.93334 36.54784 38.67843 37.74890 40.19555  46.32444   100    d
-R> 
-```
-
-Or in chart form:
-
-![](https://eddelbuettel.github.io/rcppsimdjson/rcppsimdjson_parse_benchmark.png)
-
 ### Status
 
 As of version 0.1.0, all three major OSs are supported, and JSON can be parsed from file and string
@@ -69,21 +49,6 @@ Before submitting pull requests, it is frequently preferable to first discuss ne
 an issue ticket.  See the file
 [Contributing.md](https://github.com/RcppCore/Rcpp/blob/master/Contributing.md) (in the
 [Rcpp](https://github.com/RcppCore/Rcpp) repo) for a brief discussion.
-
-
-### See Also
-
-For standard JSON work on R, as well as for other nicely done C++ libraries, consider these:
-
-- [jsonlite](https://cran.r-project.org/package=jsonlite) by [Jeroen
-  Ooms](https://github.com/jeroen) is excellent, very versatile, and probably most-widely used;
-- [rapidjsonr](https://cran.r-project.org/package=rapidjsonr) and [jsonify](https://cran.r-project.org/package=jsonify) by [David
-  Cooley](https://github.com/dcooley) bringing [RapidJSON](https://rapidjson.org/) to R;
-- [ndjson](https://cran.r-project.org/package=ndjson) by [Bob Rudis](https://rud.is/b/) builds on the
-  [JSON for Modern C++](https://github.com/nlohmann/json) library by [Niels
-  Lohmann](https://github.com/nlohmann);
-- [RJSONIO](https://cran.r-project.org/package=RJSONIO) by [Duncan Temple
-  Lang](http://www.stat.ucdavis.edu/~duncan/) started all this but could use a little love.
 
 ### Author
 
